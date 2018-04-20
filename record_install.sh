@@ -5,8 +5,7 @@
 sudo apt -y update && sudo apt -y upgrade
 
 # Set timezone to Brazil UCT-3
-echo "America/Sao Paulo" | sudo tee /etc/timezone
-sudo dpkg-reconfigure --frontend noninteractive tzdata
+sudo timedatectl set-timezone America/Sao_Paulo
 
 # Enable support for ExFAT and format removable drive
 # for video recording, automount removable drive
@@ -18,7 +17,7 @@ mkdir -p /media/videodrive
 echo '/dev/sdb1 /media/videodrive exfat defaults,auto,umask=000,users,rw 0 0' | sudo tee -a /etc/fstab
 sudo mount -t exfat /dev/sdb1 /media/videodrive
 
-# PREREQUISITES
+# Install Prerequisites
 sudo apt -y install autoconf build-essential \
 git libasound2-dev libdbus-1-dev libflac-dev \
 libfreetype6-dev libgl1-mesa-dev libjpeg-dev \
@@ -45,7 +44,7 @@ sudo ln -s /usr/include/SDL2/SDL_ttf.h /usr/local/include/SDL2/
 make all -j "$(nproc)"
 
 # Clone, Compile and install FFMPEG
-# Enable support for H264, AAC and video4linux capture
+# Enable support for H264, AAC, video4linux and drawtext
 cd "${HOME}" || exit
 git clone https://github.com/FFmpeg/FFmpeg.git
 cd FFmpeg || exit
@@ -68,18 +67,18 @@ sudo make install
 sudo gsettings set org.gnome.desktop.session idle-delay 0
 sudo gsettings set org.gnome.desktop.screensaver lock-enabled false
 
-# hack to fix pulseaudio where to find the dbus session.
+# Hack to fix pulseaudio where to find the dbus session.
 # without it the first time recording start after boot does not work
-echo 'deb blah ... blah' | sudo tee --append /etc/apt/sources.list
 echo 'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket' | sudo tee /etc/rc.local
 echo 'DBUS_SESSION_BUS_PID=`cat /run/dbus/pid`' | sudo tee --append /etc/rc.local
 echo 'pulseaudio --start' | sudo tee --append /etc/rc.local
 echo 'exit 0' | sudo tee --append /etc/rc.local
 
-# Set permissions to access webcam for current user
+# Set permissions for current user to access webcam
 sudo usermod -a -G video "$USER"
 sudo usermod -a -G audio "$USER"
 sudo chmod g+rw /dev/video0
+sudo chmod g+rw /dev/video1
 
 # Install node.js via NVM
 cd "${HOME}"
@@ -89,6 +88,7 @@ bash install.sh
 source ~/.profile
 nvm install v9.11.1
 
+# Install orchestrator daemon and ffmpeg scripts
 cd "${HOME}"/ffmpeg_dvr || exit
 chmod +x record_cam*
 sudo chown -R deped:deped /opt
@@ -96,7 +96,7 @@ cp record_cam1.sh /opt/record_cam1.sh
 cp record_cam2.sh /opt/record_cam2.sh
 cp daemon.js /opt/daemon.js
 
-# Prepare record daemon
+# Prepare and setup record orchestrator daemon
 sudo cp record.service /lib/systemd/system/record.service
 sudo chmod 644 /lib/systemd/system/record.service
 sudo systemctl daemon-reload
