@@ -16,6 +16,7 @@ sudo mkfs.exfat -n VIDEODRIVE /dev/sdb1
 sudo fsck.exfat /dev/sdb1
 mkdir -p /media/videodrive
 echo '/dev/sdb1 /media/videodrive exfat defaults,auto,umask=000,users,rw 0 0' | sudo tee -a /etc/fstab
+sudo mount -t exfat /dev/sdb1 /media/videodrive
 
 # PREREQUISITES
 sudo apt -y install autoconf build-essential \
