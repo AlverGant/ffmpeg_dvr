@@ -29,37 +29,37 @@ libx264-dev libfdk-aac-dev v4l-utils libv4l-dev \
 htop texinfo libfribidi-dev
 
 # Clone, Compile and install Simple DirectMedia Layer
-cd ${HOME}
+cd "${HOME}" || exit
 hg clone https://hg.libsdl.org/SDL SDL
-cd SDL 
+cd SDL || exit
 make clean
 ./autogen.sh
 ./configure
-make all -j $(nproc)
+make all -j "$(nproc)"
 sudo make install
-cd test
+cd test || exit
 make clean
 ./configure
 sudo ln -s /usr/include/SDL2/SDL_ttf.h /usr/local/include/SDL2/
-make all -j $(nproc)
+make all -j "$(nproc)"
 
 # Clone, Compile and install FFMPEG
 # Enable support for H264, AAC and video4linux capture
-cd ${HOME}
+cd "${HOME}" || exit
 git clone https://github.com/FFmpeg/FFmpeg.git
-cd FFmpeg
+cd FFmpeg || exit
 git pull
 ./configure \
 	--enable-gpl \
 	--enable-nonfree \
 	--enable-openssl \
-    --enable-libx264 \
-    --enable-libfdk-aac \
-    --enable-libv4l2 \
-    --enable-libfreetype \
-    --enable-libfontconfig \
-    --enable-libfribidi
-make -j $(nproc)
+    	--enable-libx264 \
+    	--enable-libfdk-aac \
+    	--enable-libv4l2 \
+    	--enable-libfreetype \
+    	--enable-libfontconfig \
+    	--enable-libfribidi
+make -j "$(nproc)"
 sudo make install
 
 # configure autologon for the user
@@ -68,28 +68,26 @@ sudo gsettings set org.gnome.desktop.session idle-delay 0
 sudo gsettings set org.gnome.desktop.screensaver lock-enabled false
 
 # Disable power management and screen blanking
-echo "export DISPLAY=:0" >> ${HOME}/.profile
-echo "xset s off && xset s noblank && xset -dpms" >> ${HOME}/.profile
+echo "export DISPLAY=:0" >> "${HOME}"/.profile
+echo "xset s off && xset s noblank && xset -dpms" >> "${HOME}"/.profile
 
 # Set permissions to access webcam for current user
-sudo usermod -a -G video $USER
-sudo usermod -a -G audio $USER
+sudo usermod -a -G video "$USER"
+sudo usermod -a -G audio "$USER"
 sudo chmod g+rw /dev/video0
 
 # Install node.js
 sudo apt install -y nodejs npm
 
-
+cd "${HOME}"/ffmpeg_dvr || exit
 cp record_cam1.sh /opt/record_cam1.sh
 cp record_cam2.sh /opt/record_cam2.sh
 chmod + x record_cam*.sh
 cp daemon.js /opt/daemon.js
 
 # Prepare record daemon
-cd ${HOME}
 sudo cp record.service /lib/systemd/system/record.service
 sudo chmod 644 /lib/systemd/system/record.service
 sudo systemctl daemon-reload
 sudo systemctl enable record.service
-
 

@@ -10,5 +10,5 @@ ffmpeg -thread_queue_size $QUEUE_SIZE \
   -vcodec libx264 -preset superfast -af dynaudnorm=s=3:f=60 \
   -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf: text='%{localtime\:%a %b %d %Y} - $1': fontcolor=white: fontsize=48: box=1: boxcolor=black@0.5: y=0: x=0" \
   -f segment -segment_time $SEGMENT_TIME \
-  $2/$(date +%s)_%04d.mp4
+  "$2"/"$(date +%s)"_%04d.mp4
 
