@@ -83,8 +83,10 @@ sudo apt install -y build-essential libssl-dev curl
 curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh -o install.sh
 bash install.sh
 source ~/.profile
+nvm install v9.11.1
 
 cd "${HOME}"/ffmpeg_dvr || exit
+chmod +x record_cam*
 sudo cp record_cam1.sh /opt/record_cam1.sh
 sudo cp record_cam2.sh /opt/record_cam2.sh
 sudo cp daemon.js /opt/daemon.js

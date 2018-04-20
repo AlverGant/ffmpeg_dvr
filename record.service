@@ -1,6 +1,6 @@
 [Unit]
 Description=Orquestrador do gravador
-After=network.target
+After=avahi-daemon.service network.target
 
 [Service]
 Environment=VIDEO_PATH=/media/videodrive/
