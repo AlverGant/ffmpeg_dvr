@@ -69,8 +69,8 @@ sudo gsettings set org.gnome.desktop.session idle-delay 0
 sudo gsettings set org.gnome.desktop.screensaver lock-enabled false
 
 # Disable power management and screen blanking
-echo "export DISPLAY=:0" >> "${HOME}"/.profile
-echo "xset s off && xset s noblank && xset -dpms" >> "${HOME}"/.profile
+#echo "export DISPLAY=:0" >> "${HOME}"/.profile
+#echo "xset s off && xset s noblank && xset -dpms" >> "${HOME}"/.profile
 
 # Set permissions to access webcam for current user
 sudo usermod -a -G video "$USER"
@@ -90,4 +90,3 @@ sudo cp record.service /lib/systemd/system/record.service
 sudo chmod 644 /lib/systemd/system/record.service
 sudo systemctl daemon-reload
 sudo systemctl enable record.service
-
