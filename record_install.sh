@@ -77,8 +77,12 @@ sudo usermod -a -G video "$USER"
 sudo usermod -a -G audio "$USER"
 sudo chmod g+rw /dev/video0
 
-# Install node.js
-sudo apt install -y nodejs npm
+# Install node.js via NVM
+cd "${HOME}"
+sudo apt install -y build-essential libssl-dev curl
+curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh -o install.sh
+bash install.sh
+source ~/.profile
 
 cd "${HOME}"/ffmpeg_dvr || exit
 sudo cp record_cam1.sh /opt/record_cam1.sh
