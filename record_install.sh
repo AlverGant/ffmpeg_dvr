@@ -81,10 +81,9 @@ sudo chmod g+rw /dev/video0
 sudo apt install -y nodejs npm
 
 cd "${HOME}"/ffmpeg_dvr || exit
-cp record_cam1.sh /opt/record_cam1.sh
-cp record_cam2.sh /opt/record_cam2.sh
-chmod + x record_cam*.sh
-cp daemon.js /opt/daemon.js
+sudo cp record_cam1.sh /opt/record_cam1.sh
+sudo cp record_cam2.sh /opt/record_cam2.sh
+sudo cp daemon.js /opt/daemon.js
 
 # Prepare record daemon
 sudo cp record.service /lib/systemd/system/record.service
