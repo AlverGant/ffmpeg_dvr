@@ -68,9 +68,13 @@ sudo make install
 sudo gsettings set org.gnome.desktop.session idle-delay 0
 sudo gsettings set org.gnome.desktop.screensaver lock-enabled false
 
-# Disable power management and screen blanking
-#echo "export DISPLAY=:0" >> "${HOME}"/.profile
-#echo "xset s off && xset s noblank && xset -dpms" >> "${HOME}"/.profile
+# hack to fix pulseaudio where to find the dbus session.
+# without it the first time recording start after boot does not work
+echo 'deb blah ... blah' | sudo tee --append /etc/apt/sources.list
+echo 'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket' | sudo tee /etc/rc.local
+echo 'DBUS_SESSION_BUS_PID=`cat /run/dbus/pid`' | sudo tee --append /etc/rc.local
+echo 'pulseaudio --start' | sudo tee --append /etc/rc.local
+echo 'exit 0' | sudo tee --append /etc/rc.local
 
 # Set permissions to access webcam for current user
 sudo usermod -a -G video "$USER"
@@ -87,9 +91,10 @@ nvm install v9.11.1
 
 cd "${HOME}"/ffmpeg_dvr || exit
 chmod +x record_cam*
-sudo cp record_cam1.sh /opt/record_cam1.sh
-sudo cp record_cam2.sh /opt/record_cam2.sh
-sudo cp daemon.js /opt/daemon.js
+sudo chown -R deped:deped /opt
+cp record_cam1.sh /opt/record_cam1.sh
+cp record_cam2.sh /opt/record_cam2.sh
+cp daemon.js /opt/daemon.js
 
 # Prepare record daemon
 sudo cp record.service /lib/systemd/system/record.service
