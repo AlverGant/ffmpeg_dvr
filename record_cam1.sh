@@ -1,6 +1,6 @@
 #!/bin/bash
 
-EXPORT DISPLAY=:0
+DISPLAY=:0
 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
 DBUS_SESSION_BUS_PID=`cat /run/dbus/pid`
 pulseaudio --start
