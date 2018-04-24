@@ -8,7 +8,7 @@
     <script>
       window.end = function() {
         console.log('Ending..')
-        let dest = 'http://192.168.10.13:1337/api'
+        let dest = 'http://192.168.10.79:1337/api'
         let request = new XMLHttpRequest();
         request.open('POST', dest, true);
         request.send('end_video');
@@ -16,7 +16,7 @@
 
       window.start = function() {
         console.log('Starting..')
-        let dest = 'http://192.168.10.13:1337/api'
+        let dest = 'http://192.168.10.79:1337/api'
         let request = new XMLHttpRequest();
         request.open('POST', dest, true);
         request.send('start_video');

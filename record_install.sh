@@ -91,10 +91,9 @@ nvm install v9.11.1
 # Install orchestrator daemon and ffmpeg scripts
 cd "${HOME}"/ffmpeg_dvr || exit
 chmod +x record_cam*
-sudo chown -R deped:deped /opt
-cp record_cam1.sh /opt/record_cam1.sh
-cp record_cam2.sh /opt/record_cam2.sh
-cp daemon.js /opt/daemon.js
+sudo mkdir /opt/recorder-scripts
+sudo chown -R deped:deped /opt/
+cp * /opt/recorder-scripts
 
 # Prepare and setup record orchestrator daemon
 sudo cp record.service /lib/systemd/system/record.service

@@ -1,7 +1,7 @@
 let { spawn, exec } = require('child_process')
 let fs = require('fs')
 let videoDrive = process.env.VIDEO_PATH || '/media/videodrive/'
-let shouldRunFlag = process.env.RUN_FLAG || '/opt/RUN_FLAG'
+let shouldRunFlag = process.env.RUN_FLAG || '/opt/recorder-scripts/RUN_FLAG'
 let path = require('path')
 let shouldRun = fs.existsSync(shouldRunFlag)
 let http = require('http')
@@ -45,15 +45,15 @@ let record = () => {
     fs.mkdirSync(dir)
   })
 
-  console.log(`/opt/record_cam1.sh CAMERA_1 ${videoDrive}CAMERA_1`)
-  cam1 = spawn('/opt/record_cam1.sh', ['CAMERA_1', dirs[0]], {
+  console.log(`/opt/recorder-scripts/record_cam1.sh CAMERA_1 ${videoDrive}CAMERA_1`)
+  cam1 = spawn('/opt/recorder-scripts/record_cam1.sh', ['CAMERA_1', dirs[0]], {
     uid: 1000,
     gid: 1000,
     detached: true
   })
 
-  console.log(`/opt/record_cam1.sh CAMERA_2 ${videoDrive}CAMERA_2`)
-  cam2 = spawn('/opt/record_cam2.sh', ['CAMERA_2', dirs[1]], {
+  console.log(`/opt/recorder-scripts/record_cam1.sh CAMERA_2 ${videoDrive}CAMERA_2`)
+  cam2 = spawn('/opt/recorder-scripts/record_cam2.sh', ['CAMERA_2', dirs[1]], {
     uid: 1000,
     gid: 1000,
     detached: true
@@ -98,7 +98,7 @@ http.createServer((request, response) => {
         break
       }
     } else {
-      return response.end(fs.readFileSync('/opt/index.html'))
+      return response.end(fs.readFileSync('/opt/recorder-scripts/index.html'))
     }
   })
 }).listen(1337)
