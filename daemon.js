@@ -5,11 +5,36 @@ let shouldRunFlag = process.env.RUN_FLAG || '/opt/RUN_FLAG'
 let path = require('path')
 let shouldRun = fs.existsSync(shouldRunFlag)
 let http = require('http')
+let SerialPort = require('serialport');
+let Delimiter = require('parser-delimiter')
+let port = new SerialPort('/dev/ttyUSB0', {
+  baudRate: 9600
+})
+let { ERROR_STATUS, STATUS_UPDATE, COMMANDS, head, tail } = require('./protocol.js')
+let parser = port.pipe(new Delimiter({ delimiter: '153' }))
+let isRunning = false
 
-console.log('Service started.')
+parser.on('data', (data) => {
+  let val = data.toString('utf8')
+  let serviceStart = STATUS_UPDATE.SERVICE_START
+  let serviceStop = STATUS_UPDATE.SERVICE_STOP
+
+  if (serviceStart.indexOf(val) > -1) {
+    return start()
+  }
+
+  if (serviceStop.indexOf(val) > -1) {
+    return stop()
+  }
+})
 
 let cam1, cam2
+
 let record = () => {
+  if (isRunning) {
+	console.log('Already running');
+	return;
+  }
   let dirs = [
     `${videoDrive}CAMERA_1`,
     `${videoDrive}CAMERA_2`
@@ -20,12 +45,14 @@ let record = () => {
     fs.mkdirSync(dir)
   })
 
+  console.log(`/opt/record_cam1.sh CAMERA_1 ${videoDrive}CAMERA_1`)
   cam1 = spawn('/opt/record_cam1.sh', ['CAMERA_1', dirs[0]], {
     uid: 1000,
     gid: 1000,
     detached: true
   })
 
+  console.log(`/opt/record_cam1.sh CAMERA_2 ${videoDrive}CAMERA_2`)
   cam2 = spawn('/opt/record_cam2.sh', ['CAMERA_2', dirs[1]], {
     uid: 1000,
     gid: 1000,
@@ -33,20 +60,19 @@ let record = () => {
   })
 
   cam1.stdout.on('data', (data) => {
-    console.log(data)
-  })
-
-  cam2.stdout.on('data', (data) => {
-    console.log(data)
+    console.log('hauhauha', data)
   })
 
   cam1.stdout.on('error', (data) => {
     console.log('ERROR CAM1')
+    process.exit(1)
   })
 
   cam2.stdout.on('error', (data) => {
     console.log('ERROR CAM2')
+    process.exit(1)
   })
+  isRunning = true;
 }
 
 http.createServer((request, response) => {
@@ -55,8 +81,6 @@ http.createServer((request, response) => {
   request.on('data', function (data) {
     body += data
 
-    // Too much POST data, kill the connection!
-    // 1e6 === 1 * Math.pow(10, 6) === 1 * 1000000 ~~~ 1MB
     if (body.length > 1e6)
     request.connection.destroy()
   });
@@ -65,27 +89,12 @@ http.createServer((request, response) => {
     if (request.url.indexOf('/api') > -1) {
       switch(body) {
         case 'start_video':
-          console.log('Starting video..')
-          writeFlag()
-          record()
+          start()
           response.end('OK')
         break
         case 'end_video':
-          console.log('Ending video..')
-          removeFlag()
-
-          try {
-            cam1.stdin.pause()
-            process.kill(-cam1.pid)
-
-            cam2.stdin.pause()
-            process.kill(-cam2.pid)
-            response.end('OK')
-          } catch(e) {
-            exec('killall -9 ffmpeg', () => {
-              response.end('OK FORCED')
-            })
-          }
+          stop()
+          response.end('OK')
         break
       }
     } else {
@@ -93,6 +102,28 @@ http.createServer((request, response) => {
     }
   })
 }).listen(1337)
+
+function start() {
+  console.log('Starting video..')
+  writeFlag()
+  record()
+}
+
+function stop() {
+  removeFlag()
+console.log('isRunning flase')
+isRunning = false;
+  try {
+    cam1.stdin.pause()
+    process.kill(-cam1.pid)
+
+    cam2.stdin.pause()
+    process.kill(-cam2.pid)
+  } catch(e) {
+console.log('catch')
+    exec('killall -9 ffmpeg')
+  }
+}
 
 let writeFlag = () => {
   return fs.writeFileSync(shouldRunFlag, 'true', 'utf-8')
@@ -110,4 +141,3 @@ if (shouldRun) {
   console.log('Flag is set, starting record')
   record()
 }
-
