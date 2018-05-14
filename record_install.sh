@@ -1,5 +1,6 @@
 #!/bin/bash
 # Ubuntu 16.04.4 Desktop 64 bits
+# P&D TV Globo - Alvinho
 
 # Update SO
 sudo apt -y update && sudo apt -y upgrade
@@ -84,7 +85,7 @@ echo 'pulseaudio -D' | sudo tee /etc/rc.local
 echo 'exit 0' | sudo tee --append /etc/rc.local 
 
 # Install node.js via NVM
-cd "${HOME}"
+cd "${HOME}" || exit
 sudo apt install -y build-essential libssl-dev curl
 curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh -o install.sh
 bash install.sh
@@ -96,11 +97,11 @@ cd "${HOME}"/ffmpeg_dvr || exit
 chmod +x record_cam*
 sudo mkdir /opt/recorder-scripts
 sudo chown -R "$USER":"$USER" /opt/
-cp * /opt/recorder-scripts
+cp ./* /opt/recorder-scripts
 
 # Prepare and setup record orchestrator daemon
 cd "${HOME}"/ffmpeg_dvr || exit
-sed -i 's/User=.*/User="$USER"/g' record.service
+sed -i "s/User=.*/User='$USER'/g" record.service
 sudo cp record.service /lib/systemd/system/record.service
 sudo chmod 644 /lib/systemd/system/record.service
 sudo systemctl daemon-reload
