@@ -52,7 +52,7 @@ let record = () => {
     detached: true
   })
 
-  console.log(`/opt/recorder-scripts/record_cam1.sh CAMERA_2 ${videoDrive}CAMERA_2`)
+  console.log(`/opt/recorder-scripts/record_cam2.sh CAMERA_2 ${videoDrive}CAMERA_2`)
   cam2 = spawn('/opt/recorder-scripts/record_cam2.sh', ['CAMERA_2', dirs[1]], {
     uid: 1000,
     gid: 1000,
