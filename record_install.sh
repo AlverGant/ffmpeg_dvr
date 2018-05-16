@@ -84,6 +84,12 @@ sudo chmod g+rw /dev/video1
 echo 'pulseaudio -D' | sudo tee /etc/rc.local
 echo 'exit 0' | sudo tee --append /etc/rc.local 
 
+# Set X display for the user
+# Disable screensaver and screen blanking
+echo "export DISPLAY=:0" >> "${HOME}"/.profile
+echo "xset s off && xset s noblank && xset -dpms" >> "${HOME}"/.profile
+source "${HOME}"/.profile
+
 # Install node.js via NVM
 cd "${HOME}" || exit
 sudo apt install -y build-essential libssl-dev curl

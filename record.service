@@ -3,8 +3,10 @@ Description=Orquestrador do gravador
 After=avahi-daemon.service network.target multi-user.target
 
 [Service]
+Environment="DISPLAY=:0"
 Environment=VIDEO_PATH=/media/videodrive/
 Environment=RUN_FLAG=/opt/RUN_FLAG
+Environment="XAUTHORITY=/home/ubuntu/.Xauthority"
 Type=simple
 User=deped
 ExecStart=/home/deped/.nvm/versions/node/v9.11.1/bin/node /opt/recorder-scripts/daemon.js
