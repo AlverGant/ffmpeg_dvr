@@ -8,7 +8,7 @@ Environment=VIDEO_PATH=/media/videodrive/
 Environment=RUN_FLAG=/opt/RUN_FLAG
 Environment="XAUTHORITY=/home/ubuntu/.Xauthority"
 Type=simple
-User=deped
+User=root
 ExecStart=/home/deped/.nvm/versions/node/v9.11.1/bin/node /opt/recorder-scripts/daemon.js
 Restart=always
 RestartSec=5
