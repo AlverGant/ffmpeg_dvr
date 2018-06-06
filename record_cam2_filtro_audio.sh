@@ -47,7 +47,7 @@ nice -n -7 ffmpeg -thread_queue_size $QUEUE_SIZE \
   -f alsa -ac $AUDIO_CHANNELS -i $AUDIO_DEVICE \
   -thread_queue_size $QUEUE_SIZE -f video4linux2 \
   -input_format mjpeg -framerate $FPS -video_size $RESOLUTION -i $CAMERA_DEVICE \
-  -pix_fmt yuv420p -vcodec libx264 -crf 22 -preset superfast \
+  -pix_fmt yuv420p -vcodec libx264 -crf 22 -preset superfast -af "dynaudnorm=s=0:f=60" \
   -vf "drawtext=fontfile=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf: text='%{localtime\\:%a %b %d %Y %T} - $1': fontcolor=white: fontsize=24: box=1: boxcolor=black@0.5: y=0: x=0" \
   -g $GOP_TIME_FRAMES -sc_threshold 0 -force_key_frames "expr:gte(t,n_forced*$GOP_TIME_SECONDS)" -f segment -segment_time $SEGMENT_TIME_SECONDS \
   "$2"/"$(date "+%Y.%m.%d-%H.%M.%S")"_%04d.mp4
